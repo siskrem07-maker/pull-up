@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pull Up</title>
+<meta name="description" content="Post what you're doing on or near campus and find people to do it with. For Spartans.">
+<meta name="theme-color" content="#1D6A43">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#16211B; --muted:#5D6B63; --line:#DCE3DD;
+  --accent:#1D6A43; --accent-ink:#FFFFFF; --accent-soft:#E2F0E7; --warn:#A4501B;
+  --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
+  --body:"Figtree",system-ui,-apple-system,"Segoe UI",sans-serif;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0F1512; --surface:#18211C; --ink:#E7EEE9; --muted:#98A79E; --line:#2A3630;
+  --accent:#4FBF83; --accent-ink:#06130C; --accent-soft:#1D3327; --warn:#E59A62; color-scheme:dark}}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+.wrap{max-width:640px;margin:0 auto;padding:20px max(16px,env(safe-area-inset-right,0px)) 150px max(16px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:18px}
+h1.logo{font:800 clamp(34px,8vw,48px)/1 var(--display);letter-spacing:-.02em;margin:0}
+h1.logo span{color:var(--accent)}
+.sub{margin:6px 0 0;color:var(--muted);max-width:46ch}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}
+.chips.wrapc{flex-wrap:wrap;overflow:visible}
+.chip{flex:none;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:999px;padding:7px 14px;font:600 13px var(--body);cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.feed{display:flex;flex-direction:column;gap:12px}
+.day{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:8px 0 -4px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px;display:grid;grid-template-columns:56px 1fr;gap:4px 14px;cursor:pointer;text-align:left;width:100%;color:inherit;font:inherit}
+.time{grid-row:span 3;text-align:center;font:800 18px/1.1 var(--display);font-variant-numeric:tabular-nums}
+.time small{display:block;font:600 11px var(--body);color:var(--muted);letter-spacing:.06em}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:10px;min-width:0}
+.card h3{margin:0;font:600 17px/1.3 var(--display);min-width:0;overflow-wrap:anywhere}
+.cat{flex:none;font:600 11px var(--body);letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:3px 8px;border-radius:6px}
+.meta{color:var(--muted);font-size:14px;min-width:0;overflow-wrap:anywhere}
+.note{margin:2px 0 0;font-size:14px;overflow-wrap:anywhere}
+.row{grid-column:2;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:6px}
+.who{font-size:13px;color:var(--muted);min-width:0}
+.who b{color:var(--ink);font-weight:600}
+.btn{border:0;border-radius:10px;padding:9px 16px;font:600 14px var(--body);cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn.link{background:none;color:var(--muted);padding:9px 4px;text-decoration:underline}
+.btn[disabled]{opacity:.5;cursor:default}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:14px;padding:28px 20px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font:600 18px var(--display);margin-bottom:4px}
+.fab{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(74px + env(safe-area-inset-bottom,0px));box-shadow:0 6px 20px rgba(0,0,0,.18);padding:13px 22px;font-size:15px;border-radius:999px;z-index:5}
+.tabs{position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);display:flex;justify-content:center;z-index:6;padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{flex:1;max-width:213px;background:none;border:0;padding:16px 8px;font:600 14px var(--body);color:var(--muted);cursor:pointer}
+.tabs button[aria-current="page"]{color:var(--accent)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.4);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.panel{background:var(--surface);width:100%;max-width:640px;border-radius:18px 18px 0 0;max-height:92%;overflow:auto;padding:20px max(18px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(18px,env(safe-area-inset-left,0px))}
+.panel h2{margin:0 0 12px;font:800 24px var(--display);overflow-wrap:anywhere}
+form{display:grid;gap:12px}
+label{display:grid;gap:4px;font:600 13px var(--body)}
+input,select,textarea{font:15px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+textarea{resize:vertical;min-height:64px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.status{font-size:13px;color:var(--muted)}
+.err{color:var(--warn)}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.people{display:flex;flex-direction:column;gap:6px;margin:8px 0 14px}
+.person{display:flex;gap:10px;align-items:center;background:none;border:0;padding:4px 0;color:inherit;font:inherit;text-align:left;cursor:pointer;width:100%}
+.av{flex:none;width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center;font:800 14px var(--display)}
+.person small{display:block;color:var(--muted)}
+.chat{border:1px solid var(--line);border-radius:12px;background:var(--bg);padding:10px;max-height:240px;overflow:auto;display:flex;flex-direction:column;gap:8px}
+.msg{font-size:14px;overflow-wrap:anywhere}
+.msg b{font-weight:600}
+.msg time{color:var(--muted);font-size:12px;margin-left:6px}
+.send{display:flex;gap:8px;margin-top:8px}
+.send input{flex:1}
+.h4{font:600 12px var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:14px 0 4px}
+.tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.foot{font-size:12px;color:var(--muted);text-align:center}
+@media (max-width:420px){.two{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1 class="logo">Pull <span>Up</span></h1>
+    <p class="sub" id="tagline">Post something you're doing on or near campus. Anyone can join. Gym sessions, study groups, pickup games, dinner at Brody.</p>
+  </header>
+
+  <!-- Signed out -->
+  <section class="box" id="v-auth" hidden>
+    <form id="authForm">
+      <label>Your MSU email
+        <input id="email" type="email" required placeholder="sparty@msu.edu" autocomplete="email">
+      </label>
+      <button class="btn" id="authBtn" type="submit">Send login link</button>
+      <div class="status" id="authMsg">For Spartans only. We email you a link, no password needed.</div>
+    </form>
+  </section>
+
+  <!-- First sign-in / edit profile -->
+  <section class="box" id="v-profile" hidden>
+    <form id="profForm">
+      <h2 id="profTitle" style="margin:0;font:800 22px var(--display)">Set up your profile</h2>
+      <label>Name people will see
+        <input id="p-name" maxlength="40" required placeholder="Remi S.">
+      </label>
+      <div class="two">
+        <label>Year
+          <select id="p-year"><option value="">Prefer not to say</option><option>Freshman</option><option>Sophomore</option><option>Junior</option><option>Senior</option><option>Grad</option></select>
+        </label>
+        <label>Major (optional)
+          <input id="p-major" maxlength="60" placeholder="Business">
+        </label>
+      </div>
+      <label>About you (optional)
+        <textarea id="p-bio" maxlength="200" placeholder="Lift at IM West most mornings. Always down for Brody."></textarea>
+      </label>
+      <div>
+        <div style="font:600 13px var(--body);margin-bottom:6px">What are you into?</div>
+        <div class="chips wrapc" id="p-int"></div>
+      </div>
+      <div class="status err" id="profErr" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn link" id="signOut" hidden>Sign out</button>
+        <button type="submit" class="btn" id="profBtn">Save</button>
+      </div>
+    </form>
+  </section>
+
+  <!-- Feed / My plans -->
+  <section id="v-feed" hidden>
+    <div class="chips" id="chips" role="toolbar" aria-label="Filter by type"></div>
+    <div class="status" id="status" style="margin:10px 0"></div>
+    <div class="feed" id="feed"></div>
+  </section>
+
+  <p class="foot">Meet in public spots like IM West, the library or a dining hall. Report anything sketchy from the plan's page.</p>
+</div>
+
+<button class="btn fab" id="openPost" hidden>+ Post a plan</button>
+<nav class="tabs" id="tabs" hidden>
+  <button data-tab="feed">Plans</button>
+  <button data-tab="mine">My plans</button>
+  <button data-tab="profile">Profile</button>
+</nav>
+
+<!-- Post a plan -->
+<div class="sheet" id="postSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="postTitle">
+    <h2 id="postTitle">Post a plan</h2>
+    <form id="postForm">
+      <label>What are you doing?
+        <input id="f-title" maxlength="80" required placeholder="Chest day, need a spotter">
+      </label>
+      <div class="two">
+        <label>Type <select id="f-cat"></select></label>
+        <label>Spots open <input id="f-cap" type="number" min="1" max="50" value="3" required></label>
+      </div>
+      <label>Where
+        <input id="f-place" maxlength="60" required placeholder="IM West, 2nd floor">
+      </label>
+      <div class="two">
+        <label>Day <input id="f-date" type="date" required></label>
+        <label>Time <input id="f-time" type="time" required></label>
+      </div>
+      <label>Anything else? (optional)
+        <textarea id="f-note" maxlength="200" placeholder="All levels welcome. Look for the green hoodie."></textarea>
+      </label>
+      <div class="status err" id="postErr" hidden></div>
+      <div class="actions">
+        <button type="button" class="btn ghost" data-close>Cancel</button>
+        <button type="submit" class="btn" id="postBtn">Post</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Plan detail + chat -->
+<div class="sheet" id="planSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="d-title">
+    <div class="top"><h2 id="d-title"></h2><span class="cat" id="d-cat"></span></div>
+    <div class="meta" id="d-meta"></div>
+    <p class="note" id="d-note"></p>
+    <div class="h4" id="d-count"></div>
+    <div class="people" id="d-people"></div>
+    <div class="actions" id="d-actions" style="justify-content:flex-start"></div>
+    <div class="h4">Group chat</div>
+    <div id="d-chatwrap">
+      <div class="chat" id="d-chat" aria-live="polite"></div>
+      <form class="send" id="chatForm" style="display:flex">
+        <input id="chatInput" maxlength="500" placeholder="Running 5 min late…" aria-label="Message" autocomplete="off">
+        <button class="btn" type="submit">Send</button>
+      </form>
+    </div>
+    <div class="status" id="d-chatlock">Join this plan to see the chat and coordinate.</div>
+    <div class="status err" id="d-err" hidden style="margin-top:8px"></div>
+    <div class="actions" style="margin-top:14px">
+      <button type="button" class="btn link" id="d-report">Report</button>
+      <button type="button" class="btn ghost" data-close>Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Someone else's profile -->
+<div class="sheet" id="userSheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="u-name">
+    <h2 id="u-name"></h2>
+    <div class="meta" id="u-meta"></div>
+    <p class="note" id="u-bio"></p>
+    <div class="tags" id="u-tags"></div>
+    <div class="actions" style="margin-top:14px"><button type="button" class="btn ghost" data-close>Close</button></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+/* ================= CONFIG ================= */
+const SUPABASE_URL = "https://mhspjyxdurdeksbxgnkr.supabase.co";            // looks like https://abcd1234.supabase.co
+const SUPABASE_KEY = "sb_publishable_XpWg5zjzkj98HLUiN5pWOw_14H4L2JX"; // publishable key. NEVER the secret key.
+const EMAIL_DOMAIN = "@msu.edu";
+/* ========================================== */
+
+const CATS = ["Gym","Study","Food","Sports","Games","Explore","Other"];
+const $ = id => document.getElementById(id);
+const el = (tag, cls, text) => { const e=document.createElement(tag); if(cls) e.className=cls; if(text!=null) e.textContent=text; return e; };
+
+let sb=null, me=null, myProfile=null;
+let tab="feed", filter="All";
+let acts=[], going=[], profiles={};
+let openPlan=null, chatChannel=null, msgs=[], confirmDel=null, myInts=new Set();
+
+function show(view){
+  ["v-auth","v-profile","v-feed"].forEach(v=>$(v).hidden = v!==view);
+  const inApp = !!myProfile;
+  $("tabs").hidden=!inApp;
+  $("openPost").hidden = !(inApp && view==="v-feed");
+  $("tagline").hidden = inApp && view!=="v-feed";
+  document.querySelectorAll("#tabs button").forEach(b=> b.dataset.tab===tab ? b.setAttribute("aria-current","page") : b.removeAttribute("aria-current"));
+}
+function setStatus(t, err){ const s=$("status"); s.textContent=t||""; s.hidden=!t; s.classList.toggle("err",!!err); }
+function fail(id, t){ const x=$(id); x.textContent=t; x.hidden=!t; }
+const nm = id => id===me ? "You" : (profiles[id]?.name || "A Spartan");
+const initials = n => (n||"?").trim().split(/\s+/).map(w=>w[0]).slice(0,2).join("").toUpperCase();
+
+/* ---------- auth ---------- */
+$("authForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const email=$("email").value.trim().toLowerCase(), m=$("authMsg");
+  m.classList.remove("err");
+  if(!email.endsWith(EMAIL_DOMAIN)){ m.textContent="Use your "+EMAIL_DOMAIN+" email. Pull Up is for Spartans only."; m.classList.add("err"); return; }
+  $("authBtn").disabled=true;
+  const {error} = await sb.auth.signInWithOtp({email, options:{emailRedirectTo: location.origin+location.pathname}});
+  $("authBtn").disabled=false;
+  if(error){ m.textContent = /rate|limit/i.test(error.message) ? "Too many login emails right now. Try again in a few minutes." : "Couldn't send the link: "+error.message; m.classList.add("err"); }
+  else m.textContent="Check your MSU inbox (and Junk) for the login link, then open it on this device.";
+});
+$("signOut").onclick = async ()=>{ await sb.auth.signOut(); };
+
+async function onSession(session){
+  const uid = session?.user?.id || null;
+  if(uid===me && (uid===null || myProfile)) { if(!uid) show("v-auth"); return; }
+  me=uid; myProfile=null;
+  if(!me){ show("v-auth"); return; }
+  if(!(session.user.email||"").toLowerCase().endsWith(EMAIL_DOMAIN)){
+    await sb.auth.signOut(); $("authMsg").textContent="That account isn't an "+EMAIL_DOMAIN+" address."; $("authMsg").classList.add("err"); return;
+  }
+  const {data, error} = await sb.from("profiles").select("*").eq("id", me).maybeSingle();
+  if(error){ show("v-auth"); $("authMsg").textContent="Couldn't load your profile: "+error.message; $("authMsg").classList.add("err"); return; }
+  if(data){ myProfile=data; profiles[me]=data; startApp(); }
+  else openProfileForm(true);
+}
+
+/* ---------- profile ---------- */
+function renderInts(){
+  const box=$("p-int"); box.innerHTML="";
+  CATS.filter(c=>c!=="Other").forEach(c=>{
+    const b=el("button","chip",c); b.type="button"; b.setAttribute("aria-pressed", String(myInts.has(c)));
+    b.onclick=()=>{ myInts.has(c)?myInts.delete(c):myInts.add(c); renderInts(); };
+    box.appendChild(b);
+  });
+}
+function openProfileForm(first){
+  $("profTitle").textContent = first ? "Set up your profile" : "Your profile";
+  $("signOut").hidden = false;
+  $("p-name").value = myProfile?.name || "";
+  $("p-year").value = myProfile?.year || "";
+  $("p-major").value = myProfile?.major || "";
+  $("p-bio").value = myProfile?.bio || "";
+  myInts = new Set(myProfile?.interests || []);
+  renderInts(); fail("profErr",""); show("v-profile");
+}
+$("profForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const row={ id:me, name:$("p-name").value.trim().slice(0,40), year:$("p-year").value||null,
+    major:$("p-major").value.trim().slice(0,60)||null, bio:$("p-bio").value.trim().slice(0,200)||null, interests:[...myInts] };
+  if(!row.name){ fail("profErr","Add a name."); return; }
+  $("profBtn").disabled=true;
+  const {data, error} = await sb.from("profiles").upsert(row).select().single();
+  $("profBtn").disabled=false;
+  if(error){ fail("profErr","Couldn't save: "+error.message); return; }
+  const first=!myProfile; myProfile=data; profiles[me]=data;
+  if(first) startApp(); else { tab="feed"; show("v-feed"); render(); }
+});
+
+/* ---------- data ---------- */
+let started=false, loadTimer=null;
+function startApp(){
+  tab="feed"; show("v-feed"); renderChips(); setStatus("Loading plans…"); load();
+  if(started) return; started=true;
+  sb.channel("feed")
+    .on("postgres_changes",{event:"*",schema:"public",table:"activities"}, queueLoad)
+    .on("postgres_changes",{event:"*",schema:"public",table:"going"}, queueLoad)
+    .subscribe();
+  setInterval(()=>{ if(me) load(); }, 60e3);
+  document.addEventListener("visibilitychange", ()=>{ if(!document.hidden && me) load(); });
+}
+function queueLoad(){ clearTimeout(loadTimer); loadTimer=setTimeout(load, 250); }
+async function load(){
+  if(!me) return;
+  const since=new Date(Date.now()-2*3600e3).toISOString();
+  const a = await sb.from("activities").select("*").gte("starts_at", since).order("starts_at").limit(300);
+  if(a.error){ setStatus("Couldn't load plans right now.", true); return; }
+  acts = a.data.filter(x=>!x.hidden);
+  const ids = acts.map(x=>x.id);
+  if(ids.length){
+    const g = await sb.from("going").select("activity_id,user_id,created_at").in("activity_id", ids).order("created_at");
+    going = g.error ? [] : g.data;
+  } else going=[];
+  const need=[...new Set([...acts.map(x=>x.host), ...going.map(x=>x.user_id)])].filter(id=>!profiles[id]);
+  if(need.length){
+    const p = await sb.from("profiles").select("*").in("id", need);
+    (p.data||[]).forEach(r=>profiles[r.id]=r);
+  }
+  setStatus(""); render();
+  if(openPlan){ const still=acts.find(x=>x.id===openPlan); still ? renderPlan() : closeSheets(); }
+}
+const goers = id => going.filter(g=>g.activity_id===id).map(g=>g.user_id);
+
+/* ---------- feed ---------- */
+function renderChips(){
+  const box=$("chips"); box.innerHTML="";
+  ["All",...CATS].forEach(c=>{
+    const b=el("button","chip",c); b.setAttribute("aria-pressed", String(c===filter));
+    b.onclick=()=>{ filter=c; renderChips(); render(); };
+    box.appendChild(b);
+  });
+}
+function dayLabel(d){
+  const t=new Date(); t.setHours(0,0,0,0); const x=new Date(d); x.setHours(0,0,0,0);
+  const diff=Math.round((x-t)/864e5);
+  if(diff===0) return "Today"; if(diff===1) return "Tomorrow";
+  return new Date(d).toLocaleDateString([], {weekday:"long", month:"short", day:"numeric"});
+}
+function render(){
+  if(tab==="profile") return;
+  const feed=$("feed"); feed.innerHTML="";
+  let list = acts.filter(a=> filter==="All" || a.cat===filter);
+  if(tab==="mine") list = list.filter(a=> a.host===me || goers(a.id).includes(me));
+  if(!list.length){
+    const e=el("div","empty");
+    e.appendChild(el("strong",null, tab==="mine" ? "You're not in any plans yet" : filter==="All" ? "No plans posted yet" : "Nothing in "+filter+" yet"));
+    e.appendChild(el("span",null, tab==="mine" ? "Join one from Plans, or post your own." : "Tap “Post a plan” and be the first. Even “eating at Brody at 6, come sit” counts."));
+    feed.appendChild(e); return;
+  }
+  let last="";
+  for(const a of list){
+    const dl=dayLabel(a.starts_at);
+    if(dl!==last){ feed.appendChild(el("div","day",dl)); last=dl; }
+    const ppl=goers(a.id), left=a.cap-ppl.length, joined=ppl.includes(me), isHost=a.host===me;
+    const card=el("article","card"); card.tabIndex=0; card.setAttribute("role","button");
+    const hm=new Date(a.starts_at).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"}).split(" ");
+    const time=el("div","time",hm[0]); if(hm[1]) time.appendChild(el("small",null,hm[1])); card.appendChild(time);
+    const top=el("div","top"); top.appendChild(el("h3",null,a.title)); top.appendChild(el("span","cat",a.cat)); card.appendChild(top);
+    card.appendChild(el("div","meta", a.place+" · posted by "+nm(a.host)));
+    if(a.note) card.appendChild(el("p","note",a.note)); else card.appendChild(el("span"));
+    const row=el("div","row"), who=el("div","who");
+    if(ppl.length){ who.append("Going: "); who.appendChild(el("b",null,ppl.map(nm).join(", "))); } else who.append("No one yet");
+    who.append(left>0 ? " · "+left+" spot"+(left===1?"":"s")+" left" : " · Full");
+    row.appendChild(who);
+    const btn=el("button","btn");
+    if(isHost){ btn.className="btn ghost"; btn.textContent="Your plan"; btn.onclick=ev=>{ev.stopPropagation(); showPlan(a.id);}; }
+    else if(joined){ btn.className="btn ghost"; btn.textContent="Open chat"; btn.onclick=ev=>{ev.stopPropagation(); showPlan(a.id);}; }
+    else if(left<=0){ btn.disabled=true; btn.textContent="Full"; }
+    else { btn.textContent="I'm in"; btn.onclick=ev=>{ev.stopPropagation(); join(a.id, btn);}; }
+    row.appendChild(btn); card.appendChild(row);
+    card.onclick=()=>showPlan(a.id);
+    card.onkeydown=ev=>{ if(ev.key==="Enter" && ev.target===card) showPlan(a.id); };
+    feed.appendChild(card);
+  }
+}
+async function join(id, btn){
+  if(btn) btn.disabled=true;
+  const {error} = await sb.from("going").insert({activity_id:id, user_id:me});
+  if(error && error.code!=="23505"){ setStatus(error.message.includes("full") ? "That plan just filled up." : "Couldn't join: "+error.message, true); fail("d-err", error.message); }
+  await load();
+}
+async function leave(id){
+  const {error} = await sb.from("going").delete().eq("activity_id", id).eq("user_id", me);
+  if(error) fail("d-err","Couldn't leave: "+error.message);
+  await load();
+}
+async function removeAct(id){
+  const {error} = await sb.from("activities").delete().eq("id", id);
+  if(error){ fail("d-err","Couldn't delete: "+error.message); return; }
+  closeSheets(); await load();
+}
+
+/* ---------- plan detail + chat ---------- */
+function showPlan(id){
+  openPlan=id; confirmDel=null; msgs=[]; fail("d-err",""); $("d-report").textContent="Report"; $("d-report").disabled=false;
+  $("planSheet").hidden=false; renderPlan(); openChat();
+}
+function renderPlan(){
+  const a=acts.find(x=>x.id===openPlan); if(!a) return;
+  const ppl=goers(a.id), isHost=a.host===me, joined=ppl.includes(me), left=a.cap-ppl.length;
+  $("d-title").textContent=a.title; $("d-cat").textContent=a.cat;
+  const d=new Date(a.starts_at);
+  $("d-meta").textContent = dayLabel(d)+" at "+d.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})+" · "+a.place;
+  $("d-note").textContent=a.note||""; $("d-note").hidden=!a.note;
+  $("d-count").textContent = "Who's going ("+(ppl.length+1)+") · "+(left>0 ? left+" spot"+(left===1?"":"s")+" left" : "full");
+  const box=$("d-people"); box.innerHTML="";
+  [a.host, ...ppl].forEach((uid,i)=>{
+    const p=profiles[uid]||{}, b=el("button","person"); b.type="button";
+    b.appendChild(el("span","av",initials(p.name)));
+    const t=el("span"); t.append(nm(uid)+(i===0?" (host)":""));
+    const s=[p.year,p.major].filter(Boolean).join(" · "); if(s) t.appendChild(el("small",null,s));
+    b.appendChild(t); b.onclick=()=>showUser(uid); box.appendChild(b);
+  });
+  const acts2=$("d-actions"); acts2.innerHTML="";
+  if(isHost){
+    const del=el("button","btn ghost", confirmDel===a.id ? "Tap again to delete" : "Delete plan");
+    del.onclick=()=>{ if(confirmDel===a.id) removeAct(a.id); else { confirmDel=a.id; renderPlan(); } };
+    acts2.appendChild(del);
+  } else if(joined){
+    const b=el("button","btn ghost","Leave plan"); b.onclick=()=>{ b.disabled=true; leave(a.id); }; acts2.appendChild(b);
+  } else {
+    const b=el("button","btn", left>0?"I'm in":"Full"); b.disabled=left<=0;
+    b.onclick=async()=>{ await join(a.id,b); openChat(); }; acts2.appendChild(b);
+  }
+  const member=isHost||joined;
+  $("d-chatwrap").hidden=!member; $("d-chatlock").hidden=member; $("d-report").hidden=isHost;
+}
+async function openChat(){
+  closeChat();
+  const a=acts.find(x=>x.id===openPlan); if(!a) return;
+  if(!(a.host===me || goers(a.id).includes(me))) return;
+  const id=openPlan;
+  const {data, error} = await sb.from("messages").select("*").eq("activity_id", id).order("created_at").limit(200);
+  if(openPlan!==id) return;
+  msgs = error ? [] : data; await needProfiles(msgs.map(m=>m.user_id)); renderChat();
+  chatChannel = sb.channel("chat-"+id)
+    .on("postgres_changes",{event:"INSERT",schema:"public",table:"messages",filter:"activity_id=eq."+id}, async p=>{
+      if(msgs.some(m=>m.id===p.new.id)) return;
+      msgs.push(p.new); await needProfiles([p.new.user_id]); renderChat();
+    }).subscribe();
+}
+function closeChat(){ if(chatChannel){ sb.removeChannel(chatChannel); chatChannel=null; } }
+async function needProfiles(ids){
+  const need=[...new Set(ids)].filter(i=>!profiles[i]); if(!need.length) return;
+  const p=await sb.from("profiles").select("*").in("id", need); (p.data||[]).forEach(r=>profiles[r.id]=r);
+}
+function renderChat(){
+  const box=$("d-chat"); box.innerHTML="";
+  if(!msgs.length) box.appendChild(el("div","status","No messages yet. Say where to meet."));
+  msgs.forEach(m=>{
+    const r=el("div","msg"); r.appendChild(el("b",null,nm(m.user_id)+": ")); r.append(m.body);
+    r.appendChild(el("time",null,new Date(m.created_at).toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})));
+    box.appendChild(r);
+  });
+  box.scrollTop=box.scrollHeight;
+}
+$("chatForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const body=$("chatInput").value.trim().slice(0,500); if(!body||!openPlan) return;
+  $("chatInput").value="";
+  const {data, error} = await sb.from("messages").insert({activity_id:openPlan, user_id:me, body}).select().single();
+  if(error){ fail("d-err","Couldn't send: "+error.message); $("chatInput").value=body; return; }
+  if(!msgs.some(m=>m.id===data.id)){ msgs.push(data); renderChat(); }
+});
+$("d-report").onclick = async ()=>{
+  const b=$("d-report");
+  if(b.textContent==="Report"){ b.textContent="Tap again to report this plan"; return; }
+  b.disabled=true;
+  const {error} = await sb.from("reports").insert({activity_id:openPlan, reporter:me});
+  b.textContent = (!error || error.code==="23505") ? "Reported. Thanks." : "Couldn't report";
+};
+function showUser(uid){
+  const p=profiles[uid]||{};
+  $("u-name").textContent = p.name || "A Spartan";
+  $("u-meta").textContent = [p.year,p.major].filter(Boolean).join(" · ");
+  $("u-bio").textContent = p.bio || ""; $("u-bio").hidden=!p.bio;
+  const t=$("u-tags"); t.innerHTML=""; (p.interests||[]).forEach(i=>t.appendChild(el("span","cat",i)));
+  $("userSheet").hidden=false;
+}
+
+/* ---------- post ---------- */
+CATS.forEach(c=>{ const o=el("option",null,c); o.value=c; $("f-cat").appendChild(o); });
+$("openPost").onclick=()=>{
+  const d=new Date(Date.now()+3600e3), pad=n=>String(n).padStart(2,"0");
+  $("f-date").value=d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+  $("f-time").value=pad(d.getHours())+":00";
+  if(filter!=="All") $("f-cat").value=filter;
+  fail("postErr",""); $("postSheet").hidden=false; $("f-title").focus();
+};
+$("postForm").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const when=new Date($("f-date").value+"T"+$("f-time").value);
+  if(!(when.getTime() > Date.now()-15*60e3)){ fail("postErr","Pick a time that hasn't passed yet."); return; }
+  const row={ title:$("f-title").value.trim().slice(0,80), cat:$("f-cat").value, place:$("f-place").value.trim().slice(0,60),
+    starts_at:when.toISOString(), cap:Math.min(50,Math.max(1,parseInt($("f-cap").value,10)||1)),
+    note:$("f-note").value.trim().slice(0,200)||null, host:me };
+  if(!row.title||!row.place){ fail("postErr","Add what you're doing and where."); return; }
+  $("postBtn").disabled=true;
+  const {error} = await sb.from("activities").insert(row);
+  $("postBtn").disabled=false;
+  if(error){ fail("postErr","Couldn't post: "+error.message); return; }
+  $("postForm").reset(); $("postSheet").hidden=true; load();
+});
+
+/* ---------- sheets + tabs ---------- */
+function closeSheets(){
+  ["postSheet","planSheet","userSheet"].forEach(s=>$(s).hidden=true);
+  openPlan=null; closeChat();
+}
+document.querySelectorAll("[data-close]").forEach(b=> b.onclick=()=>{
+  const s=b.closest(".sheet"); s.hidden=true; if(s.id==="planSheet"){ openPlan=null; closeChat(); }
+});
+document.querySelectorAll(".sheet").forEach(s=> s.addEventListener("click", e=>{
+  if(e.target===s){ s.hidden=true; if(s.id==="planSheet"){ openPlan=null; closeChat(); } }
+}));
+document.addEventListener("keydown", e=>{
+  if(e.key!=="Escape") return;
+  if(!$("userSheet").hidden) $("userSheet").hidden=true; else closeSheets();
+});
+document.querySelectorAll("#tabs button").forEach(b=> b.onclick=()=>{
+  tab=b.dataset.tab;
+  if(tab==="profile") openProfileForm(false); else { show("v-feed"); render(); }
+});
+
+/* ---------- boot ---------- */
+if(SUPABASE_URL.includes("PASTE")){
+  show("v-auth"); $("authBtn").disabled=true;
+  $("authMsg").textContent="Setup needed: add the Supabase project URL in the CONFIG block of index.html."; $("authMsg").classList.add("err");
+} else {
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  sb.auth.onAuthStateChange((_evt, session)=>{ setTimeout(()=>onSession(session), 0); });
+}
+</script>
+</body>
+</html>
